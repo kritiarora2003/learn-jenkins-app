@@ -3,8 +3,35 @@ pipeline {
 
     stages {
         stage("build") {
+            agent  {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
             steps {
-                sh 'echo "hello"'
+                sh '''
+                    ls -la
+                    node --version
+                    npm --versino
+                    npm ci
+                    npm run build
+                    ls -ls
+                '''
+            }
+        }
+
+        stage("test") {
+            agent  {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            
+            steps {
+                sh 'test -f build/index.html'
+                sh 'npm test'
             }
         }
     }
