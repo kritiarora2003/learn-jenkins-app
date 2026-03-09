@@ -48,7 +48,7 @@ pipeline {
                     npm install server
                     node_modules/.bin/serve -s buld &
                     sleep 10
-                    npx playwright test
+                    npx playwright test --reporter=html
                 '''
             }
         }
