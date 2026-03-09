@@ -13,7 +13,7 @@ pipeline {
                 sh '''
                     ls -la
                     node --version
-                    npm --versino
+                    npm --version
                     npm ci
                     npm run build
                     ls -ls
@@ -28,7 +28,7 @@ pipeline {
                     reuseNode true
                 }
             }
-            
+
             steps {
                 sh 'test -f build/index.html'
                 sh 'npm test'
