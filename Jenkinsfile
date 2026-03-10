@@ -7,8 +7,9 @@ pipeline {
     }
 
     stages {
-        stage("build") {
-            agent  {
+
+        stage("Build") {
+            agent {
                 docker {
                     image 'node:18-alpine'
                     reuseNode true
@@ -16,51 +17,50 @@ pipeline {
             }
             steps {
                 sh '''
-                    ls -la
                     node --version
                     npm --version
                     npm ci
                     npm run build
-                    ls -ls
                 '''
             }
         }
-        
+
         stage('Tests') {
             parallel {
-                stage("test") {
-                    agent  {
+
+                stage("unit-test") {
+                    agent {
                         docker {
                             image 'node:18-alpine'
                             reuseNode true
                         }
                     }
-
                     steps {
                         sh 'test -f build/index.html'
-                        sh 'npm test'
+                        sh 'CI=true npm test'
                     }
                 }
 
                 stage("e2e") {
-                    agent  {
+                    agent {
                         docker {
                             image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                             reuseNode true
                         }
                     }
-
                     steps {
                         sh '''
-                            npm install server
-                            node_modules/.bin/serve -s build &
+                            npm install -g serve
+                            serve -s build &
                             sleep 10
-                            npx playwright test --reporter=html
+                            npx playwright test
                         '''
                     }
                 }
+
             }
         }
+
         stage('Deploy') {
             agent {
                 docker {
@@ -71,9 +71,7 @@ pipeline {
             steps {
                 sh '''
                     npm install --save-dev netlify-cli
-                    node_modules/.bin/netlify --version
-                    echo "deploying to prod##############"
-                    node_modules/.bin/netlify status
+                    npx netlify deploy --prod --dir=build
                 '''
             }
         }
