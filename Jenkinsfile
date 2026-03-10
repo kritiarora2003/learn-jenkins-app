@@ -79,6 +79,28 @@ pipeline {
             }
         }
 
+
+        stage("prod e2e") {
+            agent  {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL = 'https://animated-monstera-5a9e93.netlify.app'
+            }
+
+            steps {
+                sh '''
+                    node_modules/.bin/serve -s build &
+                    sleep 10
+                    npx playwright test --reporter=html
+                '''
+            }
+        }
+
     }
 
     post {
