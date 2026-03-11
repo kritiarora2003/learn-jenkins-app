@@ -76,7 +76,7 @@ pipeline {
                     echo "deploying to prostagingd##############"
                     node_modules/.bin/netlify status
                     npx netlify deploy --dir=build --no-build --json >> deploy_output.json
-                    node_modules/.bin/node-jq -r. '.deploy_url' deploy_output.json
+                    node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json
                 '''
             }
         }
