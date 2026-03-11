@@ -101,7 +101,8 @@ pipeline {
                     node_modules/.bin/serve -s build &
                     sleep 10
                     npx playwright test --reporter=html
-                '''
+                    mkdir playwright-stage-report
+                '''ß
             }
 
             post {
@@ -157,6 +158,7 @@ pipeline {
                     node_modules/.bin/serve -s build &
                     sleep 10
                     npx playwright test --reporter=html
+                    mkdir playwright-report
                 '''
             }
 
