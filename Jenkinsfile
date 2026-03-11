@@ -102,7 +102,7 @@ pipeline {
                     sleep 10
                     npx playwright test --reporter=html
                     mkdir playwright-stage-report
-                '''ß
+                '''
             }
 
             post {
