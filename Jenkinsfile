@@ -63,34 +63,39 @@ pipeline {
         }
 
         stage("deploy staging e2e") {
-            agent  {
+            agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                     reuseNode true
                 }
             }
 
-            environment {
-                CI_ENVIRONMENT_URL = "fix#######"
-            }
-
             steps {
                 sh '''
                     npm install --save-dev netlify-cli node-jq
-                    node_modules/.bin/netlify --version
-                    echo "deploying to prostagingd##############"
-                    node_modules/.bin/netlify status
-                    npx netlify deploy --dir=build --no-build --json >> deploy_output.json
-                    CI_ENVIRONMENT_URL = $(node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json)
-                    node_modules/.bin/serve -s build &
-                    sleep 10
+                    npx netlify deploy --dir=build --no-build --json > deploy_output.json
+                '''
+
+                script {
+                    env.CI_ENVIRONMENT_URL = sh(
+                        script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json",
+                        returnStdout: true
+                    ).trim()
+                }
+
+                sh '''
+                    echo "Testing staging URL: $CI_ENVIRONMENT_URL"
                     npx playwright test --reporter=html
                 '''
             }
 
             post {
                 always {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright stage E2E', reportTitles: '', useWrapperFileDirectly: true])
+                    publishHTML([
+                        reportDir: 'playwright-report',
+                        reportFiles: 'index.html',
+                        reportName: 'Playwright stage E2E'
+                    ])
                 }
             }
         }
