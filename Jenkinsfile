@@ -61,7 +61,26 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+
+        stage('Deploy staging') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    npm install --save-dev netlify-cli
+                    node_modules/.bin/netlify --version
+                    echo "deploying to prostagingd##############"
+                    node_modules/.bin/netlify status
+                    npx netlify deploy --dir=build --no-build
+                '''
+            }
+        }
+
+        stage('Deploy prod') {
             agent {
                 docker {
                     image 'node:18-alpine'
