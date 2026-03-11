@@ -101,13 +101,12 @@ pipeline {
                     node_modules/.bin/serve -s build &
                     sleep 10
                     npx playwright test --reporter=html
-                    mkdir playwright-stage-report
                 '''
             }
 
             post {
                 always {
-                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-stage-report', reportFiles: 'index.html', reportName: 'Playwright stage E2E', reportTitles: '', useWrapperFileDirectly: true])
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright stage E2E', reportTitles: '', useWrapperFileDirectly: true])
                 }
             }
         }
@@ -146,7 +145,6 @@ pipeline {
                     node_modules/.bin/serve -s build &
                     sleep 10
                     npx playwright test --reporter=html
-                    mkdir playwright-report
                 '''
             }
 
