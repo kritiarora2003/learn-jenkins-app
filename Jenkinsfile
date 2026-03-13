@@ -77,7 +77,7 @@ pipeline {
 
                 script {
                     env.CI_ENVIRONMENT_URL = sh(
-                        script: "node_modules/.bin/node-jq -r '.deploy_url' deploy_output.json",
+                        script: "node-jq -r '.deploy_url' deploy_output.json",
                         returnStdout: true
                     ).trim()
                 }
