@@ -59,7 +59,7 @@ pipeline {
 
                     steps {
                         sh '''
-                            node_modules/.bin/serve -s build &
+                            serve -s build &
                             sleep 10
                             npx playwright test --reporter=html
                         '''
@@ -78,7 +78,6 @@ pipeline {
 
             steps {
                 sh '''
-                    npm install --save-dev netlify-cli node-jq
                     npx netlify deploy --dir=build --no-build --json > deploy_output.json
                 '''
 
@@ -127,13 +126,9 @@ pipeline {
 
             steps {
                 sh '''
-
-                    npm install --save-dev netlify-cli
-                    node_modules/.bin/netlify --version
                     echo "deploying to prod##############"
-                    node_modules/.bin/netlify status
                     npx netlify deploy --dir=build --prod --no-build
-                    node_modules/.bin/serve -s build &
+                    serve -s build &
                     sleep 10
                     npx playwright test --reporter=html
                 '''
